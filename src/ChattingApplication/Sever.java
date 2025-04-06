@@ -1,0 +1,205 @@
+package ChattingApplication;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.net.*;
+import static ChattingApplication.Client.formatLabel;
+import static java.lang.System.out;
+
+
+public class Sever  implements ActionListener {
+
+
+    JTextField text;
+    JPanel a1;
+    static Box vertical = Box.createVerticalBox ();
+
+    static JFrame j = new JFrame ();
+
+    static DataOutputStream dout=null ;
+
+    Sever() {
+        j.setLayout ( null );
+
+        JPanel p1 = new JPanel ();
+        p1.setBackground ( new Color ( 7, 94, 84 ) );
+        p1.setLayout ( null );
+        j.add ( p1 );
+
+        ImageIcon i1 = new ImageIcon ( ClassLoader.getSystemResource ( "icon/3.png" ) );
+        Image i2 = i1.getImage ().getScaledInstance ( 25, 25, Image.SCALE_DEFAULT );
+        ImageIcon i3 = new ImageIcon ( i2 );
+        JLabel back = new JLabel ( i3 );
+        back.setBounds ( 5, 20, 25, 25 );
+        p1.add ( back );
+        back.addMouseListener ( new MouseAdapter () {
+            @Override
+            public void mouseClicked(MouseEvent ae) {
+                System.exit ( 0 );
+            }
+        } );
+        ImageIcon i4 = new ImageIcon ( ClassLoader.getSystemResource ( "icon/1.jpg" ) );
+        Image i5 = i4.getImage ().getScaledInstance ( 50, 50, Image.SCALE_DEFAULT );
+        ImageIcon i6 = new ImageIcon ( i5 );
+        JLabel profile = new JLabel ( i6 );
+        profile.setBounds ( 40, 10, 50, 50 );
+        p1.add ( profile );
+
+        ImageIcon i7 = new ImageIcon ( ClassLoader.getSystemResource ( "icon/video.png" ) );
+        Image i8 = i7.getImage ().getScaledInstance ( 30, 30, Image.SCALE_DEFAULT );
+        ImageIcon i9 = new ImageIcon ( i8 );
+        JLabel video = new JLabel ( i9 );
+        video.setBounds ( 300, 20, 30, 30 );
+        p1.add ( video );
+
+        ImageIcon i10 = new ImageIcon ( ClassLoader.getSystemResource ( "icon/phone.png" ) );
+        Image i11 = i10.getImage ().getScaledInstance ( 35, 30, Image.SCALE_DEFAULT );
+        ImageIcon i12 = new ImageIcon ( i11 );
+        JLabel tel = new JLabel ( i12 );
+        tel.setBounds ( 360, 20, 35, 30 );
+        p1.add ( tel );
+
+        ImageIcon i13 = new ImageIcon ( ClassLoader.getSystemResource ( "icon/3icon.png" ) );
+        Image i14 = i13.getImage ().getScaledInstance ( 35, 30, Image.SCALE_DEFAULT );
+        ImageIcon i15 = new ImageIcon ( i14 );
+        JLabel more = new JLabel ( i15 );
+        more.setBounds ( 400, 20, 30, 30 );
+        p1.add ( more );
+
+        JLabel name = new JLabel ( "Cheeku" );
+        name.setBounds ( 110, 15, 100, 30 );
+        p1.add ( name );
+        name.setForeground ( Color.WHITE );
+        name.setFont ( new Font ( "SAN SERIF", Font.BOLD, 18 ) );
+
+        JLabel status = new JLabel ( "Active Now" );
+        status.setBounds ( 110, 40, 100, 30 );
+        p1.add ( status );
+        status.setForeground ( Color.WHITE );
+        status.setFont ( new Font ( "SAN SERIF", Font.BOLD, 10 ) );
+
+
+        p1.setBounds ( 0, 0, 450, 70 );
+
+        a1 = new JPanel ();
+        a1.setBounds ( 0, 70, 435, 550 );
+        j.add ( a1 );
+        j.getContentPane ().setBackground ( Color.white );
+
+//        JScrollBar sc=new JScrollBar(Scrollbar.VERTICAL,20,2,0,100);
+//        sc.setBounds( 380,70,15,550  );
+//        a1.add(sc,BorderLayout.EAST);
+
+
+        text = new JTextField ();
+        text.setBounds ( 0, 620, 370, 40 );
+        status.setFont ( new Font ( "SAN SERIF", Font.PLAIN, 16 ) );
+        j.add ( text );
+
+        JButton b = new JButton ( "Send" );
+        b.setBounds ( 360, 620, 80, 40 );
+        b.setBackground ( new Color ( 7, 94, 84 ) );
+        b.setForeground ( Color.white );
+        j.add ( b );
+        j.setSize ( 450, 700 );
+        j.setLocation ( 200, 100 );
+        b.addActionListener ( this );
+        j.getContentPane ().setBackground ( Color.GRAY );
+
+
+        j.setVisible ( true );
+
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        try {
+            String out = text.getText ();
+
+            JPanel p2 = formatLabel ( out );
+            a1.setLayout ( new BorderLayout () );
+            JPanel right = new JPanel ( new BorderLayout () );
+            right.add ( p2, BorderLayout.LINE_END );
+            vertical.add ( right );
+            vertical.add ( Box.createVerticalStrut ( 15 ) );
+            a1.add ( vertical, BorderLayout.PAGE_START );
+            dout.writeUTF(out);
+            text.setText ( " " );
+            j.repaint ();
+            j.invalidate ();
+            j.validate ();
+        } catch (Exception ae) {
+            ae.printStackTrace ();
+        }
+    }
+
+
+        public static JPanel formatLabel(String out) {
+            JPanel panel = new JPanel ();
+            panel.setLayout ( new BoxLayout ( panel, BoxLayout.Y_AXIS ) );
+            JLabel output = new JLabel("<html><p style=\"width:150px\">" + out + "</p></html>");
+
+
+           // JLabel output = new JLabel ( out );
+
+            output.setFont ( new Font ( "Algerian", Font.PLAIN, 16 ) );
+            output.setBackground ( new Color ( 37, 211, 102 ) );
+            output.setOpaque ( true );
+            output.setBorder ( new EmptyBorder ( 15, 15, 15, 50 ) );
+            panel.add ( output );
+            Calendar cal = Calendar.getInstance ();
+            SimpleDateFormat sdf = new SimpleDateFormat ( "HH:MM" );
+            JLabel time = new JLabel ();
+            time.setText ( sdf.format ( cal.getTime () ) );
+            panel.add ( time );
+            return panel;
+
+        }
+
+
+
+        public static void main (String[]args){
+
+            new Sever ();
+
+            try {
+                ServerSocket skt = new ServerSocket ( 62813);
+                while (true) {
+                    Socket s = skt.accept ();
+                    DataInputStream dis = new DataInputStream ( s.getInputStream () );
+                    dout = new DataOutputStream ( s.getOutputStream () );
+
+                    while (true) {
+                        String msg = dis.readUTF ();
+                        JPanel panel = formatLabel ( msg );
+                        JPanel left = new JPanel ( new BorderLayout () );
+                        left.add ( panel, BorderLayout.LINE_START );
+                        vertical.add ( left );
+                        j.validate ();
+
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace ();
+            }
+        }
+    }
+
+
+
+
+
+
+
